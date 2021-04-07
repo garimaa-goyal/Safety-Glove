@@ -8,10 +8,10 @@
 * *As soon as the gloves are at a dangerously close distance, the machinery will automatically shut down, thus avoiding any damage or injuries.*
 
 ## Techstack:
-1)*Proximity Sensor (Magnetic Hall Effect Sensor)*<br/>
-2)*Arduino Uno/Mega/Nano*<br/>
-3)*2-Channel Relay*<br/>
-4)*Radio Frequency TX and RX(433HZ)*<br/>
+1) *Proximity Sensor (Magnetic Hall Effect Sensor)*<br/>
+2) *Arduino Uno/Mega/Nano*<br/>
+3) *2-Channel Relay*<br/>
+4) *Radio Frequency TX and RX(433HZ)*<br/>
 
 
 
