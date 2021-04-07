@@ -1,0 +1,157 @@
+#include <VirtualWire.h>
+ 
+const int transmit_pin = 12;
+const int MHESP = 7; 
+ 
+char msg[7] = {'h'};
+char msg1[7] = {'j'};
+ 
+ 
+ 
+int sensor1 = A0; 
+int sensor2 = A1; 
+ 
+int sensor3 = A2; 
+int sensor4 = A3; 
+ 
+
+int sdata1 = 0;
+int sdata2 = 0; 
+int sdata3 = 0;
+int sdata4 = 0; 
+ 
+ 
+ 
+ 
+void setup()
+{
+  Serial.begin(9600);
+    vw_set_tx_pin(transmit_pin);
+ 
+    pinMode(sensor1, INPUT);
+
+    pinMode(MHESP,OUTPUT); 
+    digitalWrite(MHESP, HIGH); 
+    vw_setup(2000);      
+    
+}
+ 
+byte count = 1;
+ 
+void loop()
+{
+ 
+  sdata1 = analogRead(sensor1);
+  delay(20); 
+   
+  Serial.println(sdata1);
+  
+  
+ 
+ if(sdata1 < 500 )
+ {
+  
+  vw_send((uint8_t *)msg, 1); 
+  vw_wait_tx(); 
+  Serial.println("Protection activated");
+  delay(100);
+ 
+ }
+ 
+  if( sdata1 > 500 )
+ {
+  
+  vw_send((uint8_t *)msg1, 1); 
+  vw_wait_tx();
+  Serial.println("Normal");
+  delay(100);
+ 
+ } 
+    
+   else 
+delay(100);
+ 
+}
+
+
+
+// receiver.pde
+ 
+#include <VirtualWire.h>
+ 
+ 
+int indicator = 9; // it can also be a buzzer
+int Power = 10; // to control power to the machine/device
+ 
+ 
+const int receive_pin = 11;
+ 
+ 
+void setup()
+{
+    delay(1000);
+    Serial.begin(9600); // Debugging only
+    Serial.println("setup");
+ 
+ 
+    vw_set_rx_pin(receive_pin);
+    vw_set_ptt_inverted(true); // Required for DR3100
+    vw_setup(2000);  // Bits per sec
+    vw_rx_start();       // Start the receiver PLL running
+ 
+  
+    pinMode(indicator, OUTPUT);
+    pinMode(Power, OUTPUT);
+    digitalWrite(indicator, LOW); 
+    digitalWrite(indicator, LOW); 
+    
+}
+ 
+void loop()
+{
+    uint8_t buf[VW_MAX_MESSAGE_LEN];
+    uint8_t buflen = VW_MAX_MESSAGE_LEN;
+ 
+    if (vw_get_message(buf, &buflen)) // Non-blocking
+    {
+    int i;
+ 
+     
+    // Message with a good checksum received, dump it.
+    Serial.print("Got: ");
+    
+    for (i = 0; i < buflen; i++)
+    {
+        char c = (buf[i]);
+ 
+        if( c == 'j') // for right side
+    {
+       digitalWrite(Power, HIGH); 
+      digitalWrite(indicator, LOW); 
+      Serial.print(c);
+        Serial.print(' ');
+           
+    }
+ 
+ if( c == 'h') // 
+    {
+      
+      digitalWrite(Power, LOW); 
+      digitalWrite(indicator, HIGH); 
+      Serial.print(c);
+        Serial.print(' ');
+           
+    }  
+   
+    if( c == 'm')
+    {
+ 
+            Serial.print(c);
+        Serial.print(' ');
+           
+    } 
+ 
+    }
+ 
+    }
+}
